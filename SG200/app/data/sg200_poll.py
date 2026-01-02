@@ -12,6 +12,7 @@ endpoints = []
 collector_host = params.get("connect_ciscosg200_collector_host", "").strip()
 collector_port = str(params.get("connect_ciscosg200_collector_port", "")).strip()
 collector_proto = params.get("connect_ciscosg200_collector_protocol", "http").strip().lower()
+collector_token = params.get("connect_ciscosg200_collector_token", "").strip()
 inventory_raw = params.get("connect_ciscosg200_inventory", "").strip()
 
 if not collector_host or not collector_port:
@@ -26,6 +27,9 @@ elif not inventory_raw:
 
 else:
     base_url = f"{collector_proto}://{collector_host}:{collector_port}/sg200/mac-table"
+    headers = {}
+    if collector_token:
+        headers["X-Collector-Token"] = collector_token
 
     # Each line: ip,username,password
     lines = [ln.strip() for ln in inventory_raw.splitlines() if ln.strip()]
@@ -62,7 +66,7 @@ else:
                 switch_ip,
                 base_url,
             )
-            resp = requests.post(base_url, json=payload, timeout=45)
+            resp = requests.post(base_url, json=payload, headers=headers, timeout=45)
         except requests.exceptions.RequestException as e:
             logging.error(
                 "CiscoSG200 Poll: error contacting collector for %s: %s",
