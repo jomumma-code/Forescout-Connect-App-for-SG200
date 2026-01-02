@@ -1,0 +1,79 @@
+{
+    "name": "CiscoSG200",
+    "version": "0.1.0",
+    "author": "Your Name",
+    "testEnable": true,
+    "panels": [
+        {
+            "title": "SG200 Collector Connection",
+            "description": "External collector that scrapes Cisco SG200 MAC tables via Playwright",
+            "fields": [
+                {
+                    "display": "Collector Hostname/IP",
+                    "field ID": "connect_sg200_collector_host",
+                    "type": "shortString",
+                    "mandatory": "true",
+                    "add to column": "true",
+                    "show column": "true",
+                    "identifier": "true"
+                },
+                {
+                    "display": "Collector Port",
+                    "field ID": "connect_sg200_collector_port",
+                    "type": "integer",
+                    "mandatory": "true",
+                    "add to column": "true",
+                    "show column": "false",
+                    "value": 5000
+                },
+                {
+                    "display": "Collector Protocol",
+                    "field ID": "connect_sg200_collector_protocol",
+                    "type": "option",
+                    "options": [
+                        {
+                            "display": "HTTP",
+                            "value": "http"
+                        },
+                        {
+                            "display": "HTTPS",
+                            "value": "https"
+                        }
+                    ],
+                    "mandatory": "true",
+                    "add to column": "true",
+                    "show column": "false",
+                    "value": "http"
+                },
+                {
+                    "display": "SG200 Switch IPs (comma-separated)",
+                    "field ID": "connect_sg200_switch_list",
+                    "type": "longString",
+                    "mandatory": "true",
+                    "add to column": "true",
+                    "show column": "true",
+                    "description": "Example: 192.168.0.221,192.168.0.222"
+                }
+            ]
+        },
+        {
+            "focal appliance": true,
+            "title": "Assign eyeSight Devices",
+            "description": "<html>Select the eyeSight appliance that will communicate with the SG200 collector (and, indirectly, the SG200 switches).<html>"
+        },
+        {
+            "title": "SG200 Discovery Options",
+            "description": "Discovery schedule for polling MAC tables from the SG200 collector",
+            "fields": [
+                {
+                    "host discovery": true,
+                    "display": "Discovery Frequency (in minutes)",
+                    "max": 300000,
+                    "add to column": "true",
+                    "show column": "false",
+                    "value": 10
+                }
+            ]
+        }
+    ]
+}
