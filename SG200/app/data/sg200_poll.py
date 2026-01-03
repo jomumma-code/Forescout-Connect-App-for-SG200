@@ -11,7 +11,6 @@ endpoints = []
 
 collector_host = params.get("connect_ciscosg200_collector_host", "").strip()
 collector_port = str(params.get("connect_ciscosg200_collector_port", "")).strip()
-collector_proto = params.get("connect_ciscosg200_collector_protocol", "http").strip().lower()
 collector_token = params.get("connect_ciscosg200_collector_token", "").strip()
 inventory_raw = params.get("connect_ciscosg200_inventory", "").strip()
 
@@ -26,7 +25,7 @@ elif not inventory_raw:
     response["error"] = msg
 
 else:
-    base_url = f"{collector_proto}://{collector_host}:{collector_port}/sg200/mac-table"
+    base_url = f"http://{collector_host}:{collector_port}/sg200/mac-table"
     headers = {}
     if collector_token:
         headers["X-Collector-Token"] = collector_token

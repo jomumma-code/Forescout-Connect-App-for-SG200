@@ -83,7 +83,7 @@ def mac_table():
 SG200 collector API (Flask).
 
 Endpoints:
-    GET /sg200/mac-table?ip=...&user=...&pass=...
+    POST /sg200/mac-table
 
 Response:
     {

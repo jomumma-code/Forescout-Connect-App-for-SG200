@@ -115,7 +115,7 @@ SG200/app/data/
 
 Key settings in `system.conf`:
 
-- Collector host / port / protocol
+- Collector host / port / token
 - Optional collector token
 - Inventory list of switches (one per line): `ip,username,password`
 
@@ -137,6 +137,6 @@ The `SG200-*.zip` and `NETGEAR-*.zip` files are packaged Connect apps ready for 
 
 ## Notes
 
-- SG200 scraping is HTTP-based because some firmware builds do not support SNMP/HTTPS.
+- SG200 scraping is HTTP-based because some firmware builds do not support SNMP.
 - The Playwright scraper discovers the `csbXXXXXX` prefix after login, then directly loads
   the dynamic MAC table page and parses VLAN/MAC/port index from hidden form fields.
