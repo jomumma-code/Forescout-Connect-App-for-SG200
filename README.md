@@ -50,6 +50,25 @@ The collector is a Flask API that runs Playwright (for SG200) and HTTP scraping 
     }
     ```
 
+- `POST /sg200/system-summary`
+  - Body:
+    ```json
+    {
+      "ip": "192.168.0.221",
+      "user": "cisco",
+      "pass": "cisco"
+    }
+    ```
+  - Response:
+    ```json
+    {
+      "switch_ip": "192.168.0.221",
+      "host_name": "GARAGE-SG200",
+      "model_description": "26-port Gigabit Smart Switch",
+      "serial_number": "DNI161702F3"
+    }
+    ```
+
 - `POST /netgear/access-control`
   - Body:
     ```json

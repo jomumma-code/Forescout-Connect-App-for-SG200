@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-Library to scrape Dynamic MAC table from a Cisco SG200.
+Library to scrape data from a Cisco SG200.
 
 Public API:
     fetch_mac_table(switch_ip, username, password) -> List[dict]
+    fetch_system_summary(switch_ip, username, password) -> dict
 """
 
 import re
 from dataclasses import dataclass, asdict
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
@@ -84,6 +85,10 @@ def _detect_csb_prefix(page) -> str:
     raise RuntimeError("Could not detect csbXXXXXX prefix after login")
 
 
+def _normalize_label(text: str) -> str:
+    return " ".join(text.replace("\xa0", " ").strip().split()).rstrip(":")
+
+
 def _parse_dynamic_mac_table(html: str, switch_ip: str) -> List[MacEntry]:
     """
     Parse VLAN / MAC / port entries from the Dynamic MAC page HTML.
@@ -147,6 +152,82 @@ def _parse_dynamic_mac_table(html: str, switch_ip: str) -> List[MacEntry]:
     return entries
 
 
+def _parse_system_summary(html: str) -> Dict[str, str]:
+    soup = BeautifulSoup(html, "html.parser")
+    fields = {
+        "System Description": "system_description",
+        "System Location": "system_location",
+        "System Contact": "system_contact",
+        "Host Name": "host_name",
+        "System Uptime": "system_uptime",
+        "Current Time": "current_time",
+        "Base MAC Address": "base_mac_address",
+        "Jumbo Frames": "jumbo_frames",
+        "HTTP Service": "http_service",
+        "HTTPS Service": "https_service",
+        "Model Description": "model_description",
+        "Serial Number": "serial_number",
+        "PID VID": "pid_vid",
+        "Firmware Version": "firmware_version",
+        "Firmware MD5 Checksum": "firmware_md5_checksum",
+        "Boot Version": "boot_version",
+        "Boot MD5 Checksum": "boot_md5_checksum",
+        "Locale": "locale",
+        "Language Version": "language_version",
+        "Language MD5 Checksum": "language_md5_checksum",
+    }
+
+    result: Dict[str, str] = {}
+    for cell in soup.find_all(["td", "th"]):
+        label = _normalize_label(cell.get_text(" ", strip=True))
+        if label in fields:
+            value_cell = cell.find_next_sibling(["td", "th"])
+            if value_cell:
+                value = _normalize_label(value_cell.get_text(" ", strip=True))
+                if value:
+                    result[fields[label]] = value
+
+    return result
+
+
+def _find_system_summary_html(page, switch_ip: str, prefix: str) -> Optional[str]:
+    candidates = [
+        f"http://{switch_ip}/{prefix}/sysinfo/system_summary.htm",
+        f"http://{switch_ip}/{prefix}/sysinfo/systemSummary.htm",
+        f"http://{switch_ip}/{prefix}/sysinfo/system_summary_m.htm",
+        f"http://{switch_ip}/{prefix}/Status/system_summary.htm",
+        f"http://{switch_ip}/{prefix}/Status/system_summary_m.htm",
+    ]
+
+    home_url = f"http://{switch_ip}/{prefix}/home.htm"
+    try:
+        page.goto(home_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+    except PlaywrightTimeoutError:
+        pass
+
+    try:
+        for frame in page.frames:
+            try:
+                html = frame.content()
+            except PlaywrightTimeoutError:
+                continue
+            if "System Summary" in html:
+                return html
+    except Exception:
+        pass
+
+    for url in candidates:
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+        except PlaywrightTimeoutError:
+            pass
+        html = page.content()
+        if "System Summary" in html:
+            return html
+
+    return None
+
+
 def fetch_mac_table(switch_ip: str, username: str, password: str) -> List[dict]:
     """
     Scrape the dynamic MAC table and return a list of dicts:
@@ -184,3 +265,34 @@ def fetch_mac_table(switch_ip: str, username: str, password: str) -> List[dict]:
 
     entries = _parse_dynamic_mac_table(html, switch_ip)
     return [asdict(e) for e in entries]
+
+
+def fetch_system_summary(switch_ip: str, username: str, password: str) -> Dict[str, str]:
+    """
+    Scrape the system summary page and return a dictionary of fields.
+    """
+    base_http_url = f"http://{switch_ip}/"
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(ignore_https_errors=True)
+        page = context.new_page()
+
+        try:
+            page.goto(base_http_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+        except PlaywrightTimeoutError:
+            pass
+
+        _perform_login(page, username, password)
+        page.wait_for_timeout(3000)
+
+        prefix = _detect_csb_prefix(page)
+        html = _find_system_summary_html(page, switch_ip, prefix)
+        browser.close()
+
+    if not html:
+        raise RuntimeError("Unable to locate System Summary page after login.")
+
+    data = _parse_system_summary(html)
+    data["switch_ip"] = switch_ip
+    return data

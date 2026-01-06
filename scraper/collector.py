@@ -105,6 +105,53 @@ def mac_table():
     return jsonify({"switch_ip": switch_ip, "entries": entries}), 200
 
 
+@app.route("/sg200/system-summary", methods=["POST"])
+def system_summary():
+    """
+    POST /sg200/system-summary
+    JSON body:
+        {
+          "ip": "192.168.0.221",
+          "user": "cisco",
+          "pass": "cisco"
+        }
+
+    Response:
+        {
+          "switch_ip": "192.168.0.221",
+          "host_name": "GARAGE-SG200",
+          "model_description": "...",
+          ...
+        }
+    """
+    authorized, error = _authorize_request()
+    if not authorized:
+        return jsonify(error[0]), error[1]
+
+    data = request.get_json(silent=True) or {}
+
+    switch_ip = data.get("ip")
+    username = data.get("user")
+    password = data.get("pass")
+
+    if not switch_ip or not username or not password:
+        return (
+            jsonify({"error": "ip, user, and pass fields are required in JSON body"}),
+            400,
+        )
+
+    logger.info("Request for SG200 system summary from %s", switch_ip)
+
+    try:
+        fetch_system_summary = _load_scraper("sg200_client", "fetch_system_summary")
+        summary = fetch_system_summary(switch_ip, username, password)
+    except Exception as e:
+        logger.exception("Error fetching SG200 system summary from %s", switch_ip)
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify(summary), 200
+
+
 @app.route("/netgear/access-control", methods=["POST"])
 def netgear_access_control():
     """
