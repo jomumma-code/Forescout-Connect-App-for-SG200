@@ -250,6 +250,25 @@ NETGEAR/data/
   netgear_ac_poll.py
 ```
 
+## Deploy to Forescout eyeSight (unsigned app)
+
+These Connect app packages are **unsigned**. You must allow unsigned apps on the
+eyeSight appliance before importing.
+
+1. **Enable unsigned apps** in Forescout (Admin UI).
+   - In the eyeSight UI, navigate to **Tools → Options → Connect**.
+   - Enable **Allow unsigned apps** (wording varies by version).
+2. **Import the package**:
+   - Go to **Tools → Connect → Manage**.
+   - Click **Import** and select the generated zip (e.g., `SG200-0.2.0.zip`).
+3. **Configure the app**:
+   - Set **Collector Host**, **Collector Port**, and **Collector Token** (if used).
+   - Enter the **SG200 Switch Inventory** list (`ip,username,password` per line).
+4. **Test** the app from the Connect UI and then enable discovery.
+
+If your environment uses a different UI path, follow your Forescout documentation
+for enabling unsigned apps and importing Connect packages.
+
 ## Packaging
 
 The `SG200-*.zip` and `NETGEAR-*.zip` files are packaged Connect apps ready for import.
