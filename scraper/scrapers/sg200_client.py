@@ -9,7 +9,11 @@ Public API:
 
 import re
 from dataclasses import dataclass, asdict
+<<<<<<< HEAD
 from typing import Dict, List, Optional, Tuple
+=======
+from typing import Dict, List, Optional
+>>>>>>> origin/main
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
@@ -152,6 +156,7 @@ def _parse_dynamic_mac_table(html: str, switch_ip: str) -> List[MacEntry]:
     return entries
 
 
+<<<<<<< HEAD
 def _parse_port_settings(html: str) -> Dict[int, Dict[str, str]]:
     soup = BeautifulSoup(html, "html.parser")
     mapping: Dict[int, Dict[str, str]] = {}
@@ -180,6 +185,8 @@ def _parse_port_settings(html: str) -> Dict[int, Dict[str, str]]:
     return mapping
 
 
+=======
+>>>>>>> origin/main
 def _parse_system_summary(html: str) -> Dict[str, str]:
     soup = BeautifulSoup(html, "html.parser")
     fields = {
@@ -218,6 +225,7 @@ def _parse_system_summary(html: str) -> Dict[str, str]:
     return result
 
 
+<<<<<<< HEAD
 def _find_port_settings_html(page, switch_ip: str, prefix: str) -> Optional[str]:
     candidates = [
         f"http://{switch_ip}/{prefix}/port/Port_settings.htm",
@@ -257,6 +265,8 @@ def _find_port_settings_html(page, switch_ip: str, prefix: str) -> Optional[str]
     return None
 
 
+=======
+>>>>>>> origin/main
 def _find_system_summary_html(page, switch_ip: str, prefix: str) -> Optional[str]:
     candidates = [
         f"http://{switch_ip}/{prefix}/sysinfo/system_summary.htm",
@@ -328,6 +338,7 @@ def fetch_mac_table(switch_ip: str, username: str, password: str) -> List[dict]:
             pass
 
         html = page.content()
+<<<<<<< HEAD
         port_html = _find_port_settings_html(page, switch_ip, prefix)
         browser.close()
 
@@ -341,6 +352,12 @@ def fetch_mac_table(switch_ip: str, username: str, password: str) -> List[dict]:
             data.update(port_details)
         results.append(data)
     return results
+=======
+        browser.close()
+
+    entries = _parse_dynamic_mac_table(html, switch_ip)
+    return [asdict(e) for e in entries]
+>>>>>>> origin/main
 
 
 def fetch_system_summary(switch_ip: str, username: str, password: str) -> Dict[str, str]:

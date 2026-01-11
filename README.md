@@ -10,6 +10,7 @@ This repository contains:
 
 ![Architecture diagram](docs/architecture.svg)
 
+
 ## Repository layout (high level)
 
 ```
@@ -19,7 +20,11 @@ This repository contains:
 │   ├── scrapers/           # Scraper client modules loaded lazily
 │   │   ├── sg200_client.py # Playwright scraper for SG200 dynamic MAC table
 │   │   └── netgear_client.py # HTTP scraper for Netgear access control list
+
 │   └── dev/                # HAR/capture references for development
+=======
+│   └── *.har.txt           # HTTP capture references
+
 ├── SG200/                  # SG200 Connect app artifacts
 │   └── app/
 │       ├── data/           # system.conf, property.conf, sg200_test.py, sg200_poll.py
@@ -29,19 +34,14 @@ This repository contains:
     └── NETGEAR-*.zip       # Versioned packaged app bundles
 ```
 
-## Quick start
-
-1. Install Python 3.8+ and Playwright dependencies (see below).
-2. Start the collector (`python collector.py`).
-3. Configure the SG200/NETGEAR Connect app to point at the collector.
-
 ## Collector service
 
-The collector is a Flask API that uses Playwright for SG200 web scraping and HTTP requests for Netgear.
+The collector is a Flask API that runs Playwright (for SG200) and HTTP scraping (for Netgear).
+
 
 ## Installation (Windows & Linux)
 
-Install the collector on a system that can reach the switches/routers.
+The collector is a Python service that uses Playwright. Install it on a system that can reach the switches/routers.
 Use Python **3.8+** (3.9+ recommended).
 
 ### Windows (PowerShell)
@@ -90,7 +90,8 @@ export SG200_COLLECTOR_TOKEN="shared-secret"
 python collector.py
 ```
 
-## API endpoints
+
+### Endpoints
 
 - `POST /sg200/mac-table`
   - Body:
@@ -106,6 +107,7 @@ python collector.py
     {
       "switch_ip": "192.168.0.221",
       "entries": [
+
         {
           "switch_ip": "192.168.0.221",
           "vlan": 1,
@@ -114,6 +116,9 @@ python collector.py
           "interface": "GE1",
           "description": "Server"
         }
+
+        {"switch_ip": "192.168.0.221", "vlan": 1, "mac": "aa:bb:cc:dd:ee:ff", "port_index": 52}
+
       ]
     }
     ```
@@ -163,48 +168,16 @@ python collector.py
     }
     ```
 
-## Auth controls (optional)
+### Auth controls (optional)
 
-The collector always runs over HTTP, so you can optionally restrict who can call it.
+This deployment uses HTTP between Connect and the collector. You can enable two optional controls:
 
-### 1) IP allowlist (collector-side)
+- **IP allowlist**: set `SG200_COLLECTOR_ALLOWED_IPS` to a comma-separated list of allowed client IPs.
+- **Shared token**: set `SG200_COLLECTOR_TOKEN`, and send `X-Collector-Token` in requests.
 
-Set an environment variable on the **collector host**:
+The Connect SG200 app exposes a `Collector Token` field that maps to the `X-Collector-Token` header.
 
-**Windows (PowerShell)**
-```
-$env:SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"
-```
-
-**Linux (bash)**
-```
-export SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"
-```
-
-When set, the collector will only accept requests from those source IPs.
-
-### 2) Shared token (collector-side + Connect app)
-
-**Collector host:** set the environment variable:
-
-**Windows (PowerShell)**
-```
-$env:SG200_COLLECTOR_TOKEN="shared-secret"
-```
-
-**Linux (bash)**
-```
-export SG200_COLLECTOR_TOKEN="shared-secret"
-```
-
-**Connect app:** enter the same value in **Collector Token** (system.conf field
-`connect_ciscosg200_collector_token`). The app sends it as the `X-Collector-Token`
-HTTP header.
-
-If the token is set on the collector but missing/wrong in the request, the
-collector returns HTTP 401.
-
-## Running the collector
+### Running the collector
 
 From the repo root:
 
@@ -250,47 +223,10 @@ NETGEAR/data/
   netgear_ac_poll.py
 ```
 
-## Deploy to Forescout eyeSight (unsigned app)
-
-These Connect app packages are **unsigned**. You must allow unsigned apps on the
-Enterprise Manager (EM) before importing.
-
-### 1) Allow unsigned Connect apps on the EM
-
-On the **Enterprise Manager**:
-
-1. SSH or console in as `cliadmin`.
-2. At the `FS-CLI` prompt, run:
-
-```
-fstool allow_unsigned_connect_app_install true
-```
-
-This disables signature validation for all apps you import after running it. It is
-global, so treat it as a **dev-only** setting.
-
-When you’re done testing, re-enable enforcement with:
-
-```
-fstool allow_unsigned_connect_app_install false
-```
-
-### 2) Import your app in the Console
-
-In the **Forescout Console**:
-
-1. Go to **Tools → Options → Connect** (or **Configurations → Connect**, depending on version).
-2. Click **Import**.
-3. Select your app file:
-   - Either a `.eca`, or a `.zip` built per the App Builder guide.
-4. Click **Import** and acknowledge the invalid/missing signature warning.
-6. After import completes, click **Apply**.
-
-Your unsigned app should now appear on the **Apps** tab and be usable for config/policies.
-
 ## Packaging
 
 The `SG200-*.zip` and `NETGEAR-*.zip` files are packaged Connect apps ready for import.
+
 
 ### Create SG200 Connect app package
 
@@ -312,6 +248,8 @@ zip -r NETGEAR-0.1.1.zip data signature -x "__MACOSX/*" "*.DS_Store"
 
 Adjust the version number in the filename to match the `system.conf` version and
 your desired release tag.
+
+=======
 
 ## Notes
 

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="520" viewBox="0 0 1080 520">
   <defs>
     <style>
       .box { fill: #f8fafc; stroke: #1f2937; stroke-width: 2; rx: 10; }
@@ -13,32 +13,32 @@
     </marker>
   </defs>
 
-  <rect x="40" y="60" width="260" height="170" class="box"/>
+  <rect x="40" y="60" width="250" height="170" class="box"/>
   <text x="70" y="95" class="title">Forescout Connect App</text>
   <text x="70" y="125" class="text">- sg200_poll.py</text>
   <text x="70" y="145" class="text">- sg200_test.py</text>
   <text x="70" y="170" class="text">- system.conf / property.conf</text>
   <text x="70" y="195" class="muted">Runs on eyeSight appliance</text>
 
-  <rect x="360" y="60" width="260" height="170" class="box"/>
-  <text x="390" y="95" class="title">Collector Service</text>
-  <text x="390" y="125" class="text">Flask API</text>
-  <text x="390" y="145" class="text">/sg200/mac-table</text>
-  <text x="390" y="165" class="text">/sg200/system-summary</text>
-  <text x="390" y="190" class="muted">Playwright + scrapers</text>
+  <rect x="430" y="60" width="250" height="170" class="box"/>
+  <text x="440" y="95" class="title">Collector Service</text>
+  <text x="440" y="125" class="text">Flask API</text>
+  <text x="440" y="145" class="text">/sg200/mac-table</text>
+  <text x="440" y="165" class="text">/sg200/system-summary</text>
+  <text x="440" y="190" class="muted">Playwright + scrapers</text>
 
-  <rect x="680" y="60" width="260" height="170" class="box"/>
-  <text x="710" y="95" class="title">Cisco SG200 Switch</text>
-  <text x="710" y="125" class="text">HTTP web UI</text>
-  <text x="710" y="145" class="text">Dynamic MAC table</text>
-  <text x="710" y="165" class="text">System Summary</text>
-  <text x="710" y="190" class="muted">Port Settings (names/descriptions)</text>
+  <rect x="780" y="60" width="250" height="170" class="box"/>
+  <text x="790" y="95" class="title">Cisco SG200 Switch</text>
+  <text x="790" y="125" class="text">HTTP web UI</text>
+  <text x="790" y="145" class="text">Dynamic MAC table</text>
+  <text x="790" y="165" class="text">System Summary</text>
+  <text x="790" y="190" class="muted">Port Settings (names/descriptions)</text>
 
-  <line x1="300" y1="135" x2="360" y2="135" class="arrow"/>
-  <text x="310" y="115" class="port">HTTP : collector_port</text>
+  <line x1="310" y1="135" x2="400" y2="135" class="arrow"/>
+  <text x="310" y="115" class="port">HTTP (chosen port)</text>
 
-  <line x1="620" y1="135" x2="680" y2="135" class="arrow"/>
-  <text x="625" y="115" class="port">HTTP : 80</text>
+  <line x1="690" y1="135" x2="770" y2="135" class="arrow"/>
+  <text x="690" y="115" class="port">HTTP (80)</text>
 
   <rect x="120" y="280" width="740" height="170" class="box"/>
   <text x="150" y="315" class="title">Data Flow</text>
