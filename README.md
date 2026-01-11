@@ -253,21 +253,49 @@ NETGEAR/data/
 ## Deploy to Forescout eyeSight (unsigned app)
 
 These Connect app packages are **unsigned**. You must allow unsigned apps on the
-eyeSight appliance before importing.
+Enterprise Manager (EM) before importing.
 
-1. **Enable unsigned apps** in Forescout (Admin UI).
-   - In the eyeSight UI, navigate to **Tools → Options → Connect**.
-   - Enable **Allow unsigned apps** (wording varies by version).
-2. **Import the package**:
-   - Go to **Tools → Connect → Manage**.
-   - Click **Import** and select the generated zip (e.g., `SG200-0.2.0.zip`).
-3. **Configure the app**:
-   - Set **Collector Host**, **Collector Port**, and **Collector Token** (if used).
-   - Enter the **SG200 Switch Inventory** list (`ip,username,password` per line).
-4. **Test** the app from the Connect UI and then enable discovery.
+### 1) Allow unsigned Connect apps on the EM
 
-If your environment uses a different UI path, follow your Forescout documentation
-for enabling unsigned apps and importing Connect packages.
+On the **Enterprise Manager**:
+
+1. SSH or console in as `cliadmin`.
+2. At the `FS-CLI` prompt, run:
+
+```
+fstool allow_unsigned_connect_app_install true
+```
+
+This disables signature validation for all apps you import after running it. It is
+global, so treat it as a **dev-only** setting.
+
+When you’re done testing, re-enable enforcement with:
+
+```
+fstool allow_unsigned_connect_app_install false
+```
+
+### 2) Import your app in the Console
+
+In the **Forescout Console**:
+
+1. Go to **Tools → Options → Connect** (or **Configurations → Connect**, depending on version).
+2. Click **Import**.
+3. Select your app file:
+   - Either a `.eca`, or a `.zip` built per the App Builder guide.
+4. If you are on macOS, zip from the command line to avoid `__MACOSX`:
+
+```
+rm -f myapp.eca
+zip -r myapp.eca ./*
+```
+
+Using Finder’s “Compress” can add `__MACOSX`, which breaks imports.
+
+5. Click **Import** and acknowledge the invalid/missing signature warning.
+6. After import completes, click **Apply**.
+
+Your unsigned app should now appear on the **Apps** tab and be usable for config/policies.
 
 ## Packaging
 
