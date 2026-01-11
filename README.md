@@ -171,7 +171,15 @@ The collector always runs over HTTP, so you can optionally restrict who can call
 
 Set an environment variable on the **collector host**:
 
-- `SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"`
+**Windows (PowerShell)**
+```
+$env:SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"
+```
+
+**Linux (bash)**
+```
+export SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"
+```
 
 When set, the collector will only accept requests from those source IPs.
 
@@ -179,7 +187,15 @@ When set, the collector will only accept requests from those source IPs.
 
 **Collector host:** set the environment variable:
 
-- `SG200_COLLECTOR_TOKEN="shared-secret"`
+**Windows (PowerShell)**
+```
+$env:SG200_COLLECTOR_TOKEN="shared-secret"
+```
+
+**Linux (bash)**
+```
+export SG200_COLLECTOR_TOKEN="shared-secret"
+```
 
 **Connect app:** enter the same value in **Collector Token** (system.conf field
 `connect_ciscosg200_collector_token`). The app sends it as the `X-Collector-Token`
