@@ -6,10 +6,13 @@ This repository contains:
 - **Forescout Connect app packages** for SG200 and Netgear that call the external collector.
 - Packaged zip artifacts for each app version.
 
+<<<<<<< HEAD
 ## Architecture overview
 
 ![Architecture diagram](docs/architecture.svg)
 
+=======
+>>>>>>> origin/main
 ## Repository layout (high level)
 
 ```
@@ -19,7 +22,11 @@ This repository contains:
 │   ├── scrapers/           # Scraper client modules loaded lazily
 │   │   ├── sg200_client.py # Playwright scraper for SG200 dynamic MAC table
 │   │   └── netgear_client.py # HTTP scraper for Netgear access control list
+<<<<<<< HEAD
 │   └── dev/                # HAR/capture references for development
+=======
+│   └── *.har.txt           # HTTP capture references
+>>>>>>> origin/main
 ├── SG200/                  # SG200 Connect app artifacts
 │   └── app/
 │       ├── data/           # system.conf, property.conf, sg200_test.py, sg200_poll.py
@@ -33,6 +40,7 @@ This repository contains:
 
 The collector is a Flask API that runs Playwright (for SG200) and HTTP scraping (for Netgear).
 
+<<<<<<< HEAD
 ## Installation (Windows & Linux)
 
 The collector is a Python service that uses Playwright. Install it on a system that can reach the switches/routers.
@@ -84,6 +92,8 @@ export SG200_COLLECTOR_TOKEN="shared-secret"
 python collector.py
 ```
 
+=======
+>>>>>>> origin/main
 ### Endpoints
 
 - `POST /sg200/mac-table`
@@ -100,6 +110,7 @@ python collector.py
     {
       "switch_ip": "192.168.0.221",
       "entries": [
+<<<<<<< HEAD
         {
           "switch_ip": "192.168.0.221",
           "vlan": 1,
@@ -108,6 +119,9 @@ python collector.py
           "interface": "GE1",
           "description": "Server"
         }
+=======
+        {"switch_ip": "192.168.0.221", "vlan": 1, "mac": "aa:bb:cc:dd:ee:ff", "port_index": 52}
+>>>>>>> origin/main
       ]
     }
     ```
@@ -216,6 +230,7 @@ NETGEAR/data/
 
 The `SG200-*.zip` and `NETGEAR-*.zip` files are packaged Connect apps ready for import.
 
+<<<<<<< HEAD
 ### Create SG200 Connect app package
 
 From the repo root:
@@ -237,6 +252,8 @@ zip -r NETGEAR-0.1.1.zip data signature -x "__MACOSX/*" "*.DS_Store"
 Adjust the version number in the filename to match the `system.conf` version and
 your desired release tag.
 
+=======
+>>>>>>> origin/main
 ## Notes
 
 - SG200 scraping is HTTP-based because some firmware builds do not support SNMP.
