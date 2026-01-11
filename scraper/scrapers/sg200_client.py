@@ -9,7 +9,11 @@ Public API:
 
 import re
 from dataclasses import dataclass, asdict
+<<<<<<< HEAD
+from typing import Dict, List, Optional, Tuple
+=======
 from typing import Dict, List, Optional
+>>>>>>> origin/main
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
@@ -152,6 +156,37 @@ def _parse_dynamic_mac_table(html: str, switch_ip: str) -> List[MacEntry]:
     return entries
 
 
+<<<<<<< HEAD
+def _parse_port_settings(html: str) -> Dict[int, Dict[str, str]]:
+    soup = BeautifulSoup(html, "html.parser")
+    mapping: Dict[int, Dict[str, str]] = {}
+    table = soup.find("table")
+    if not table:
+        return mapping
+
+    rows = table.find_all("tr")
+    for row in rows:
+        cells = [cell.get_text(" ", strip=True) for cell in row.find_all(["td", "th"])]
+        if len(cells) < 3:
+            continue
+        if cells[0].lower().startswith("entry"):
+            continue
+        try:
+            entry_no = int(cells[0])
+        except ValueError:
+            continue
+        interface = cells[1]
+        description = cells[2] if len(cells) > 2 else ""
+        if interface:
+            mapping[entry_no] = {
+                "interface": interface,
+                "description": description,
+            }
+    return mapping
+
+
+=======
+>>>>>>> origin/main
 def _parse_system_summary(html: str) -> Dict[str, str]:
     soup = BeautifulSoup(html, "html.parser")
     fields = {
@@ -190,6 +225,48 @@ def _parse_system_summary(html: str) -> Dict[str, str]:
     return result
 
 
+<<<<<<< HEAD
+def _find_port_settings_html(page, switch_ip: str, prefix: str) -> Optional[str]:
+    candidates = [
+        f"http://{switch_ip}/{prefix}/port/Port_settings.htm",
+        f"http://{switch_ip}/{prefix}/port/Port_settings_m.htm",
+        f"http://{switch_ip}/{prefix}/PortManagement/port_settings.htm",
+        f"http://{switch_ip}/{prefix}/PortManagement/port_settings_m.htm",
+        f"http://{switch_ip}/{prefix}/PortManagement/port_settings_master.htm",
+        f"http://{switch_ip}/{prefix}/PortManagement/port_settings_master_m.htm",
+    ]
+
+    home_url = f"http://{switch_ip}/{prefix}/home.htm"
+    try:
+        page.goto(home_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+    except PlaywrightTimeoutError:
+        pass
+
+    try:
+        for frame in page.frames:
+            try:
+                html = frame.content()
+            except PlaywrightTimeoutError:
+                continue
+            if "Port Settings" in html and "Port Setting Table" in html:
+                return html
+    except Exception:
+        pass
+
+    for url in candidates:
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+        except PlaywrightTimeoutError:
+            pass
+        html = page.content()
+        if "Port Settings" in html:
+            return html
+
+    return None
+
+
+=======
+>>>>>>> origin/main
 def _find_system_summary_html(page, switch_ip: str, prefix: str) -> Optional[str]:
     candidates = [
         f"http://{switch_ip}/{prefix}/sysinfo/system_summary.htm",
@@ -261,10 +338,26 @@ def fetch_mac_table(switch_ip: str, username: str, password: str) -> List[dict]:
             pass
 
         html = page.content()
+<<<<<<< HEAD
+        port_html = _find_port_settings_html(page, switch_ip, prefix)
+        browser.close()
+
+    entries = _parse_dynamic_mac_table(html, switch_ip)
+    port_map = _parse_port_settings(port_html or "")
+    results = []
+    for entry in entries:
+        data = asdict(entry)
+        port_details = port_map.get(entry.port_index)
+        if port_details:
+            data.update(port_details)
+        results.append(data)
+    return results
+=======
         browser.close()
 
     entries = _parse_dynamic_mac_table(html, switch_ip)
     return [asdict(e) for e in entries]
+>>>>>>> origin/main
 
 
 def fetch_system_summary(switch_ip: str, username: str, password: str) -> Dict[str, str]:
