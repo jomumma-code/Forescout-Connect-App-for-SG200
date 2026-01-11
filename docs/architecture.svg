@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+  <defs>
+    <style>
+      .box { fill: #f8fafc; stroke: #1f2937; stroke-width: 2; rx: 10; }
+      .title { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #111827; }
+      .text { font: 14px 'Segoe UI', Arial, sans-serif; fill: #111827; }
+      .muted { font: 12px 'Segoe UI', Arial, sans-serif; fill: #4b5563; }
+      .arrow { stroke: #2563eb; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+      .port { font: 12px 'Segoe UI', Arial, sans-serif; fill: #1d4ed8; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+    </marker>
+  </defs>
+
+  <rect x="40" y="60" width="260" height="170" class="box"/>
+  <text x="70" y="95" class="title">Forescout Connect App</text>
+  <text x="70" y="125" class="text">- sg200_poll.py</text>
+  <text x="70" y="145" class="text">- sg200_test.py</text>
+  <text x="70" y="170" class="text">- system.conf / property.conf</text>
+  <text x="70" y="195" class="muted">Runs on eyeSight appliance</text>
+
+  <rect x="360" y="60" width="260" height="170" class="box"/>
+  <text x="390" y="95" class="title">Collector Service</text>
+  <text x="390" y="125" class="text">Flask API</text>
+  <text x="390" y="145" class="text">/sg200/mac-table</text>
+  <text x="390" y="165" class="text">/sg200/system-summary</text>
+  <text x="390" y="190" class="muted">Playwright + scrapers</text>
+
+  <rect x="680" y="60" width="260" height="170" class="box"/>
+  <text x="710" y="95" class="title">Cisco SG200 Switch</text>
+  <text x="710" y="125" class="text">HTTP web UI</text>
+  <text x="710" y="145" class="text">Dynamic MAC table</text>
+  <text x="710" y="165" class="text">System Summary</text>
+  <text x="710" y="190" class="muted">Port Settings (names/descriptions)</text>
+
+  <line x1="300" y1="135" x2="360" y2="135" class="arrow"/>
+  <text x="310" y="115" class="port">HTTP : collector_port</text>
+
+  <line x1="620" y1="135" x2="680" y2="135" class="arrow"/>
+  <text x="625" y="115" class="port">HTTP : 80</text>
+
+  <rect x="120" y="280" width="740" height="170" class="box"/>
+  <text x="150" y="315" class="title">Data Flow</text>
+  <text x="150" y="345" class="text">1) Connect app sends inventory (ip/user/pass) to Collector</text>
+  <text x="150" y="370" class="text">2) Collector logs into SG200 web UI and scrapes pages</text>
+  <text x="150" y="395" class="text">3) Collector returns MAC/VLAN/port + system summary metadata</text>
+  <text x="150" y="420" class="text">4) Connect app reports endpoints + properties to Forescout</text>
+</svg>
