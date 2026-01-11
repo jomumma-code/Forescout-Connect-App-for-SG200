@@ -1,15 +1,7 @@
 import importlib
 import logging
 import os
-<<<<<<< HEAD
 from typing import Callable, Dict, Optional, Tuple
-=======
-<<<<<<< HEAD
-from typing import Callable, Dict, Optional, Tuple
-=======
-from typing import Dict, Optional, Tuple
->>>>>>> origin/main
->>>>>>> origin/main
 
 from flask import Flask, request, jsonify
 
@@ -43,10 +35,6 @@ def _authorize_request() -> Tuple[bool, Optional[Tuple[Dict[str, str], int]]]:
 
     return True, None
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/main
 
 def _load_scraper(scraper_module: str, func_name: str) -> Callable:
     try:
@@ -63,11 +51,6 @@ def _load_scraper(scraper_module: str, func_name: str) -> Callable:
             f"Scraper module '{scraper_module}' does not export '{func_name}'."
         ) from exc
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/main
->>>>>>> origin/main
 
 @app.route("/health", methods=["GET"])
 def health():
