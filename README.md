@@ -283,16 +283,7 @@ In the **Forescout Console**:
 2. Click **Import**.
 3. Select your app file:
    - Either a `.eca`, or a `.zip` built per the App Builder guide.
-4. If you are on macOS, zip from the command line to avoid `__MACOSX`:
-
-```
-rm -f myapp.eca
-zip -r myapp.eca ./*
-```
-
-Using Finder’s “Compress” can add `__MACOSX`, which breaks imports.
-
-5. Click **Import** and acknowledge the invalid/missing signature warning.
+4. Click **Import** and acknowledge the invalid/missing signature warning.
 6. After import completes, click **Apply**.
 
 Your unsigned app should now appear on the **Apps** tab and be usable for config/policies.
