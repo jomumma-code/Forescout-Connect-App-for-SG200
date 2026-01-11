@@ -165,12 +165,28 @@ python collector.py
 
 ## Auth controls (optional)
 
-This deployment uses HTTP between Connect and the collector. You can enable two optional controls:
+The collector always runs over HTTP, so you can optionally restrict who can call it.
 
-- **IP allowlist**: set `SG200_COLLECTOR_ALLOWED_IPS` to a comma-separated list of allowed client IPs.
-- **Shared token**: set `SG200_COLLECTOR_TOKEN`, and send `X-Collector-Token` in requests.
+### 1) IP allowlist (collector-side)
 
-The Connect SG200 app exposes a `Collector Token` field that maps to the `X-Collector-Token` header.
+Set an environment variable on the **collector host**:
+
+- `SG200_COLLECTOR_ALLOWED_IPS="192.168.1.10,192.168.1.11"`
+
+When set, the collector will only accept requests from those source IPs.
+
+### 2) Shared token (collector-side + Connect app)
+
+**Collector host:** set the environment variable:
+
+- `SG200_COLLECTOR_TOKEN="shared-secret"`
+
+**Connect app:** enter the same value in **Collector Token** (system.conf field
+`connect_ciscosg200_collector_token`). The app sends it as the `X-Collector-Token`
+HTTP header.
+
+If the token is set on the collector but missing/wrong in the request, the
+collector returns HTTP 401.
 
 ## Running the collector
 
