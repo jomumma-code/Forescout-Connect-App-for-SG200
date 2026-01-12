@@ -14,41 +14,44 @@ This repository contains:
 
 ```
 .
-├── collector/                      # Collector service + scraper client modules
-│   ├── collector.py                # Collector entrypoint
-│   └── scrapers/                   # Scraper client modules
-│       ├── __init__.py
-│       ├── netgear_client.py
-│       └── sg200_client.py
-├── NETGEAR/                        # Netgear Connect app artifacts
+├── NETGEAR/                                # Netgear Connect app artifacts
 │   ├── app/
-│   │   └── NETGEAR-0.1.1.zip       # Packaged app bundle
-│   └── data/                       # Config + scripts
+│   │   └── NETGEAR-0.1.1.zip               # Versioned packaged app bundles
+│   └── data/                               # app package files
 │       ├── netgear_ac_poll.py
 │       ├── netgear_ac_test.py
 │       ├── property.conf
 │       └── system.conf
-├── SG200/                          # SG200 Connect app artifacts
+├── SG200/                                  # SG200 Connect app artifacts
 │   ├── app/
-│   │   └── SG200-0.1.4.zip         # Packaged app bundle (older)
-│   ├── data/                       # Config + scripts
+│   │   └── SG200-0.1.4.zip                 # Versioned packaged app bundles
+│   ├── data/                               # app package files
 │   │   ├── property.conf
 │   │   ├── sg200_poll.py
 │   │   ├── sg200_test.py
 │   │   └── system.conf
-│   └── SG200-0.2.0.zip             # Packaged app bundle (newer, at SG200/ root)
+│   └── SG200-0.2.0.zip                     # Versioned packaged app bundles
+├── collector/                              # Collector service + scraper client modules
+│   ├── scrapers/                           # Scraper client modules loaded lazily
+│   │   ├── __init__.py
+│   │   ├── netgear_client.py               # HTTP scraper for Netgear access control list
+│   │   └── sg200_client.py                 # Playwright scraper for SG200 dynamic MAC table
+│   └── collector.py                        # Flask API for SG200 + Netgear
 ├── docs/
 │   └── architecture.svg
 ├── .gitignore
-└── README.md
+├── README.md
+├── SG200-0.2.0.zip                         # Latest app bundles
+└── collector.zip                           # Latest Collector files
+
 
 ```
 
 ## Quick start
 
 1. Install Python 3.8+ and Playwright dependencies (see below).
-2. Start the collector (`python collector.py`).
-3. Configure the SG200/NETGEAR Connect app to point at the collector.
+2. Download and install collector.zip.  Start the collector (`python collector.py`).
+3. Download the latest SG200-x.x.x.zip app package. Install and Configure the SG200 Connect app to point at the collector.
 
 ## Collector service
 
@@ -60,9 +63,10 @@ Install the collector on a system that can reach the switches/routers.
 Use Python **3.8+** (3.9+ recommended).
 
 ### Windows (PowerShell)
+Unzip the collector.zip to the home directory of the collector app, then:
 
 ```powershell
-cd C:\path\to\SG200\scraper
+cd C:\path\to\SG200\collector
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
@@ -85,7 +89,7 @@ python collector.py
 ### Linux (bash)
 
 ```bash
-cd /path/to/SG200/scraper
+cd /path/to/SG200/collector
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
