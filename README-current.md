@@ -27,10 +27,11 @@ Primary outcomes in eyeSight:
 
 ![Device Properties in Forescout eyeSight console](docs/properties.png)
 
+
 ## Components
 
-- Collector service: `collector.py` (Flask app)
-- SG200 scraper: `scrapers/sg200_client.py` (Playwright-based)
+- Collector service: `collector.py` (Flask app) and SG200 scraper: `scrapers/sg200_client.py` (Playwright-based), downloadable as a **collector.zip** file
+- Cisco SG200 Connect app for Forescout eyeSight, downloadable as a **CiscoSG200ConnectApp.zip** file
 
 ---
 
@@ -45,7 +46,7 @@ Windows:
 
 # Deployment (Windows)
 
-This deployment flow is intentionally ordered:
+This deployment flow is ordered as follows:
 1) Deploy and run the collector.
 2) Test the collector against your SG200 using CLI.
 3) Only after successful CLI validation, install/configure the Forescout Connect app.
@@ -75,7 +76,7 @@ pip install flask waitress playwright requests beautifulsoup4
 python -m playwright install chromium
 ```
 
-### 1.3 Configure request controls (recommended)
+### 1.3 Configure request controls (optional)
 
 Create `C:\SG200Collector\current\collector_security.json`:
 
@@ -243,14 +244,13 @@ sc stop SG200Collector
 
 ### 3.4 Firewall
 
-Do not rely on a Windows prompt to open the port. Create an explicit inbound rule for TCP 8081 and restrict it to the eyeSight appliance IP(s).
+When you start the collector in an interactive user session (terminal) and bind to 0.0.0.0:8081, Windows Defender Firewall may display the “Windows Defender Firewall has blocked some features of this app” prompt the first time it detects inbound listening/traffic for that executable (often python.exe)
+Do not rely on a Windows prompt to open the port. Create an explicit inbound rule for TCP 8081.
 
 Example (PowerShell):
 ```powershell
-New-NetFirewallRule -DisplayName "SG200 Collector (TCP 8081)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081 -RemoteAddress 192.168.0.35
-```
+New-NetFirewallRule -DisplayName "SG200 Collector (TCP 8081)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081
 
-(Replace `192.168.0.35` with the IP of the eyeSight appliance that runs the Connect app polling.)
 
 ---
 
