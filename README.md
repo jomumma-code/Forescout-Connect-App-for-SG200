@@ -9,11 +9,15 @@ This repository contains:
 
 ![Architecture diagram](docs/architecture.svg)
 
-This project provides an HTTP collector service that Forescout Connect apps can call to inventory Cisco SG200 switches and enrich endpoint records in the Forescout eyeSight console.
+
+This project provides an HTTP collector service and a Forescout Connect app that calls the collector to inventory Cisco SG200 switches, in order to enrich endpoint records in the Forescout eyeSight console.
+
+**Important: This is an “as-is” community effort. It is not supported by Forescout, has not been reviewed or signed by Forescout, and is provided for use at your own discretion. You are responsible for validating security, operational impact, and compatibility in your environment before deploying to production.**
 
 Primary outcomes in eyeSight:
 - Switch attribution for endpoints (which switch observed the MAC).
 - Network attachment context (VLAN and switch interface name) mapped into device properties for policy, tagging, and response workflows.
+
 
 ## Key capabilities (value in Forescout eyeSight)
 
@@ -24,6 +28,7 @@ Primary outcomes in eyeSight:
     - VLAN
     - Switch interface name (e.g., GE1, GE2, …)
 - Enables Connect-based policies, tags, and automation actions that depend on “where the device is connected” (interface/VLAN) and “what infrastructure reported it” (switch identity).
+  
 
 ![Device Properties in Forescout eyeSight console](docs/properties.png)
 
@@ -250,7 +255,7 @@ Do not rely on a Windows prompt to open the port. Create an explicit inbound rul
 Example (PowerShell):
 ```powershell
 New-NetFirewallRule -DisplayName "SG200 Collector (TCP 8081)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081
-
+```
 
 ---
 
