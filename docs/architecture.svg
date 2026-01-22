@@ -35,7 +35,7 @@
   <text x="790" y="190" class="muted">Port Settings (names/descriptions)</text>
 
   <line x1="310" y1="135" x2="400" y2="135" class="arrow"/>
-  <text x="310" y="115" class="port">HTTP (chosen port)</text>
+  <text x="310" y="115" class="port">HTTP (8081)</text>
 
   <line x1="690" y1="135" x2="770" y2="135" class="arrow"/>
   <text x="690" y="115" class="port">HTTP (80)</text>
