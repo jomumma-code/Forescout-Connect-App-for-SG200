@@ -83,13 +83,16 @@ python -m playwright install chromium
 
 ### 1.3 Configure request controls (optional)
 
-Create `C:\SG200Collector\current\collector_security.json`:
+Edit `C:\SG200Collector\current\collector_security.json` if additional security controls are desired:
 
 ```json
+## edit the details below, then delete this line to activate security features, then restart collector.py ##
+
 {
-  "allowed_ips": ["127.0.0.1", "192.168.0.35"],
-  "token": "replace-with-a-long-random-string"
+  "allowed_ips": ["192.168.0.45", "192.168.1.201", "192.168.1.200"],
+  "token": "test-token"
 }
+
 ```
 
 Operational guidance:
