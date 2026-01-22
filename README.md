@@ -70,7 +70,7 @@ Extract the collector release zip into `C:\SG200Collector\current\` and confirm:
 
 ### 1.2 Create virtual environment and install dependencies
 
-Open PowerShell:
+On Windows (PowerShell):
 
 ```powershell
 cd C:\SG200Collector\current
@@ -80,7 +80,16 @@ python -m pip install --upgrade pip
 pip install flask waitress playwright requests beautifulsoup4
 python -m playwright install chromium
 ```
+Linux/Mac (bash)
 
+```bash
+cd /path/to/SG200/scraper
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install flask requests playwright beautifulsoup4
+python -m playwright install chromium
+```
 ### 1.3 Configure request controls (optional)
 
 Edit `C:\SG200Collector\current\collector_security.json` if additional security controls are desired:
