@@ -112,7 +112,17 @@ Operational guidance:
 
 ### 1.4 Run the collector interactively (initial validation)
 
+**Firewall**
+
+When you start the collector in an interactive user session (terminal) and bind to 0.0.0.0:8081, Windows Defender Firewall may display the “Windows Defender Firewall has blocked some features of this app” prompt the first time it detects inbound listening/traffic for that executable (often python.exe).
+Do not rely on a Windows prompt to open the port. Create an explicit inbound rule for TCP 8081.
+
 Start the collector on localhost:
+
+Example (PowerShell):
+```powershell
+New-NetFirewallRule -DisplayName "SG200 Collector (TCP 8081)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081
+```
 
 Windows (PowerShell):
 ```powershell
@@ -282,15 +292,7 @@ sc start SG200Collector
 sc stop SG200Collector
 ```
 
-### 3.4 Firewall
 
-When you start the collector in an interactive user session (terminal) and bind to 0.0.0.0:8081, Windows Defender Firewall may display the “Windows Defender Firewall has blocked some features of this app” prompt the first time it detects inbound listening/traffic for that executable (often python.exe).
-Do not rely on a Windows prompt to open the port. Create an explicit inbound rule for TCP 8081.
-
-Example (PowerShell):
-```powershell
-New-NetFirewallRule -DisplayName "SG200 Collector (TCP 8081)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081
-```
 
 ---
 
