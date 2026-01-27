@@ -123,14 +123,14 @@ waitress-serve --host=127.0.0.1 --port=8081 collector:app
 
 Verify the collector is reachable (run in a second terminal on the same host or from another host):
 
-macOS/Linux (bash/zsh) remotely:
-```bash
-curl -fsS "http://COLLECTOR_IP:8081/health"
-```
-
 Windows (PowerShell):
 ```powershell
 curl.exe -fsS "http://127.0.0.1:8081/health"
+```
+
+macOS/Linux (bash/zsh) remotely:
+```bash
+curl -fsS "http://COLLECTOR_IP:8081/health"
 ```
 
 Keep the collector running for Step 2.
