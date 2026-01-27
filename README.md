@@ -289,7 +289,7 @@ icacls "C:\SG200Collector\logs"
 Run PowerShell as Administrator:
 
 ```powershell
-C:\Tools\nssm.exe install SG200Collector
+C:\SG200Collector\nssm.exe install SG200Collector
 ```
 
 In the NSSM GUI, set:
