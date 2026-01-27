@@ -274,10 +274,11 @@ You can set them with this script:
 $acct = "$env:COMPUTERNAME\sg200svc"
 
 # Read & execute for collector code/config (current)
-icacls "C:\SG200Collector\current" /grant "$acct:(OI)(CI)RX" /T
+icacls "C:\SG200Collector\current" /grant "${acct}:(OI)(CI)RX" /T
 
 # Modify for logs directory
-icacls "C:\SG200Collector\logs" /grant "$acct:(OI)(CI)M" /T
+
+icacls "C:\SG200Collector\logs"    /grant "${acct}:(OI)(CI)M"  /T
 
 # Verify
 icacls "C:\SG200Collector\current"
