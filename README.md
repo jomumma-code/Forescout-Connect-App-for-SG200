@@ -149,28 +149,47 @@ POST body fields:
 Authentication header:
 - `X-Collector-Token`: must match the `token` value configured in `collector_security.json`
 
-### 2.1 Test system identity
+### 2.1 Test system identity - examples
 
-macOS/Linux (bash/zsh):
-```bash
-curl -fsS -X POST "http://COLLECTOR_IP:8081/sg200/system-summary"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
-```
 
-Windows (PowerShell, one line):
+**Windows** (PowerShell) with auth:
 ```powershell
 curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content-Type: application/json" -H "X-Collector-Token: your-token-here" -d "{\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
 ```
 
-### 2.2 Test MAC table and interface name mapping
-
-macOS/Linux (bash/zsh):
-```bash
-curl -fsS -X POST "http://COLLECTOR_IP:8081/sg200/mac-table"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
+without auth:
+```powershell
+curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content-Type: application/json" -d  {\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
 ```
 
-Windows (PowerShell, one line):
+**macOS/Linux** (bash/zsh) with auth:
+```bash
+curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
+```
+without auth:
+```bash
+curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
+```
+
+### 2.2 Test MAC table and interface name mapping - examples
+
+**Windows** (PowerShell) with auth:
 ```powershell
 curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table" -H "Content-Type: application/json" -H "X-Collector-Token: your-token-here" -d "{\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
+```
+
+without auth:
+```powershell
+curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table" -H "Content-Type: application/json" -d  {\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
+```
+
+**macOS/Linux** (bash/zsh) with auth:
+```bash
+curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
+```
+without auth:
+```bash
+curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 ```
 
 Validation checks:
