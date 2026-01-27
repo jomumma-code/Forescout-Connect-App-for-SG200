@@ -164,17 +164,14 @@ Authentication header:
 
 **Windows** (PowerShell) with auth:
 ```powershell
-curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content-Type: application/json" -H "X-Collector-Token: your-token-here" -d "{\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
-```
+$uri = 'http://127.0.0.1:8081/sg200/system-summary'
+$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
+$headers = @{ 'X-Collector-Token' = 'your-token-here' }
+Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $payload
+````
 
 without auth:
-```powershell
-curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content-Type: application/json" -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 
-$body = @{ ip="192.168.0.221"; user="cisco"; pass="cisco" } | ConvertTo-Json -Compress
-curl.exe -sS -i -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content-Type: application/json" -d $body
-
-```
 ```
 $uri = 'http://127.0.0.1:8081/sg200/system-summary'
 $payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
@@ -183,10 +180,13 @@ Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $
 ```
 
 **macOS/Linux** (bash/zsh) with auth:
+
 ```bash
 curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 ```
+
 without auth:
+
 ```bash
 curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 ```
@@ -194,33 +194,45 @@ curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Typ
 ### 2.2 Test MAC table and interface name mapping - examples
 
 **Windows** (PowerShell) with auth:
+
 ```powershell
-curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table" -H "Content-Type: application/json" -H "X-Collector-Token: your-token-here" -d "{\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
+$uri = 'http://127.0.0.1:8081/sg200/mac-table'
+$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
+$headers = @{ 'X-Collector-Token' = 'your-token-here' }
+Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $payload
 ```
 
 without auth:
+
 ```powershell
-curl.exe -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table" -H "Content-Type: application/json" -d  {\"ip\":\"192.168.0.221\",\"user\":\"cisco\",\"pass\":\"cisco\"}"
+$uri = 'http://127.0.0.1:8081/sg200/mac-table'
+$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
+Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
 
 **macOS/Linux** (bash/zsh) with auth:
+
 ```bash
 curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 ```
+
 without auth:
+
 ```bash
 curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
 ```
 
 Validation checks:
-- Both endpoints return HTTP 200.
-- `/sg200/mac-table` returns entries where `port_index` is an interface label (GE1, GE2, …).
-- `/sg200/system-summary` returns the switch identity fields.
+
+* Both endpoints return HTTP 200.
+* `/sg200/mac-table` returns entries where `port_index` is an interface label (GE1, GE2, …).
+* `/sg200/system-summary` returns the switch identity fields.
 
 If either endpoint fails:
-- Review the collector console output.
-- Confirm SG200 IP/credentials.
-- Confirm the collector host can reach the SG200 management UI.
+
+* Review the collector console output.
+* Confirm SG200 IP/credentials.
+* Confirm the collector host can reach the SG200 management UI.
 
 ---
 
