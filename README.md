@@ -166,8 +166,10 @@ curl.exe -sS -i -X POST "http://127.0.0.1:8081/sg200/system-summary" -H "Content
 
 ```
 ```
-$payload = @{ ip="192.168.0.221"; user="cisco"; pass="cisco" } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8081/sg200/system-summary" -ContentType "application/json" -Body $payload
+$uri = 'http://127.0.0.1:8081/sg200/system-summary'
+$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
+Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
+
 ```
 
 **macOS/Linux** (bash/zsh) with auth:
