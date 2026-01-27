@@ -244,6 +244,7 @@ After Step 2 succeeds, deploy the collector as a service.
 
 Download NSSM from:
 - https://nssm.cc/download
+- https://github.com/HandSonic/nssm/releases/tag/2.24
 
 Extract and place `nssm.exe` in a stable location, for example:
 - `C:\Tools\nssm.exe`
