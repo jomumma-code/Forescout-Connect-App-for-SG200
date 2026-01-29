@@ -193,6 +193,24 @@ curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Typ
 
 ### 2.2 Test MAC table and interface name mapping - examples
 
+**Windows** (PowerShell) without auth:
+
+```
+ $uri='http://127.0.0.1:8081/sg200/mac-table'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
+```
+expected response looks like:
+
+
+| mac | port_index | vlan | switch_ip |
+|---|---|---|---|
+| 00:0c:29:8d:2f:64 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:b2:94:c0 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:bf:9c:73 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:e3:95:a7 | gi4 | 1 | 192.168.1.221 |
+| 00:50:56:6c:d9:ff | gi4 | 1 | 192.168.1.221 |
+| 00:50:56:a5:09:e0 | gi4 | 1 | 192.168.1.221 |
+
+
 **Windows** (PowerShell) with auth:
 
 ```powershell
@@ -200,14 +218,6 @@ $uri = 'http://127.0.0.1:8081/sg200/mac-table'
 $payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
 $headers = @{ 'X-Collector-Token' = 'your-token-here' }
 Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $payload
-```
-
-without auth:
-
-```powershell
-$uri = 'http://127.0.0.1:8081/sg200/mac-table'
-$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
-Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
 
 **macOS/Linux** (bash/zsh) with auth:
@@ -276,20 +286,40 @@ High-level:
 
 ---
 
-## Monitoring
+## Monitoring and Testing
 
 Tail logs:
 ```powershell
-Get-Content C:\SG200Collector\logs\stdout.log -Tail 200 -Wait
+Get-Content "C:\Program Files\SG200Collector\logs\SG200Collector.err.log" -Tail 50 -Wait
 ```
+Test switch polling manually, provide switch IP and creds as prompted
+
+```
+$uri='http://127.0.0.1:8081/sg200/system-summary'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
+```
+expected response looks like:
+
+| field | value |
+|---|---|
+| firmware_version | 1.1.2.0 |
+| host_name | GARAGE-SG200 |
+| model_description | 26-port Gigabit Smart Switch |
+| serial_number | DNI161702F3 |
+| switch_ip | 192.168.1.221 |
+
+```
+ $uri='http://127.0.0.1:8081/sg200/mac-table'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
+```
+expected response looks like:
+
+
+| mac | port_index | vlan | switch_ip |
+|---|---|---|---|
+| 00:0c:29:8d:2f:64 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:b2:94:c0 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:bf:9c:73 | gi25 | 1 | 192.168.1.221 |
+| 00:0c:29:e3:95:a7 | gi4 | 1 | 192.168.1.221 |
+| 00:50:56:6c:d9:ff | gi4 | 1 | 192.168.1.221 |
+| 00:50:56:a5:09:e0 | gi4 | 1 | 192.168.1.221 |
 
 ---
-
-## Log retention (24 hours)
-
-Use a Scheduled Task to delete log files older than 24 hours:
-
-```powershell
-powershell.exe -NoProfile -Command ^
-  "Get-ChildItem 'C:\SG200Collector\logs\*.log' -File | Where-Object { $_.LastWriteTime -lt (Get-Date).AddHours(-24) } | Remove-Item -Force"
-```
