@@ -35,8 +35,10 @@ Primary outcomes in eyeSight:
 
 ## Components
 
-- Collector service: `collector.py` (Flask app) and SG200 scraper: `scrapers/sg200_client.py` (Playwright-based), downloadable as a **collector.zip** file
+- Collector App: `collector.py` (Flask app) and SG200 scraper: `scrapers/sg200_client.py` (Playwright-based), downloadable as a **collector.zip** file
+- Collectore App: Windows installer for production deployment (runs as a service)
 - Cisco SG200 Connect app for Forescout eyeSight, downloadable as a **CiscoSG200ConnectApp.zip** file
+  
 
 ---
 
@@ -81,16 +83,7 @@ python -m pip install --upgrade pip
 pip install flask waitress playwright requests beautifulsoup4
 python -m playwright install chromium
 ```
-Linux/Mac (bash)
 
-```bash
-cd /path/to/SG200/scraper
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install flask requests playwright beautifulsoup4
-python -m playwright install chromium
-```
 ### 1.3 Configure request controls (optional)
 
 Edit `C:\SG200Collector\current\collector_security.json` if additional security controls are desired:
@@ -112,7 +105,7 @@ Operational guidance:
 
 ### 1.4 Run the collector interactively (initial validation)
 
-**Firewall**
+**WIN Firewall Advisory**
 
 When you start the collector in an interactive user session (terminal) and bind to 0.0.0.0:8081, Windows Defender Firewall may display the “Windows Defender Firewall has blocked some features of this app” prompt the first time it detects inbound listening/traffic for that executable (often python.exe).
 Do not rely on a Windows prompt to open the port. Create an explicit inbound rule for TCP 8081.
@@ -131,17 +124,13 @@ cd C:\SG200Collector\current
 waitress-serve --host=127.0.0.1 --port=8081 collector:app
 ```
 
-Verify the collector is reachable (run in a second terminal on the same host or from another host):
+Verify the collector is reachable (run in a second terminal on the same host):
 
 Windows (PowerShell):
 ```powershell
 curl.exe -fsS "http://127.0.0.1:8081/health"
 ```
 
-macOS/Linux (bash/zsh) remotely:
-```bash
-curl -fsS "http://COLLECTOR_IP:8081/health"
-```
 
 Keep the collector running for Step 2.
 
@@ -160,35 +149,27 @@ Authentication header:
 - `X-Collector-Token`: must match the `token` value configured in `collector_security.json`
 
 ### 2.1 Test system identity - examples
-
+Provide switch IP and creds as prompted
 **Windows** (PowerShell) without auth:
 
 ```
-$uri = 'http://127.0.0.1:8081/sg200/system-summary'
-$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
-Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
-
+$uri='http://127.0.0.1:8081/sg200/system-summary'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
 
 **Windows** (PowerShell) with auth:
 ```powershell
-$uri = 'http://127.0.0.1:8081/sg200/system-summary'
-$payload = @{ ip='192.168.0.221'; user='cisco'; pass='cisco' } | ConvertTo-Json -Compress
-$headers = @{ 'X-Collector-Token' = 'your-token-here' }
-Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $payload
+$uri='http://127.0.0.1:8081/sg200/system-summary';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};$r=Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body; $r.PSObject.Properties | ForEach-Object {[pscustomobject]@{field=$_.Name;value=$_.Value}} | Format-Table -AutoSize field,value
 ````
+expected response looks like:
 
-**macOS/Linux** (bash/zsh) with auth:
+| field | value |
+|---|---|
+| firmware_version | 1.1.2.0 |
+| host_name | GARAGE-SG200 |
+| model_description | 26-port Gigabit Smart Switch |
+| serial_number | DNI161702F3 |
+| switch_ip | 192.168.1.221 |
 
-```bash
-curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
-```
-
-without auth:
-
-```bash
-curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
-```
 
 ### 2.2 Test MAC table and interface name mapping - examples
 
@@ -196,6 +177,12 @@ curl -fsS -X POST "http://127.0.0.1:8081/sg200/system-summary"   -H "Content-Typ
 
 ```
  $uri='http://127.0.0.1:8081/sg200/mac-table'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
+```
+
+**Windows** (PowerShell) with auth:
+
+```powershell
+$uri='http://127.0.0.1:8081/sg200/mac-table';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};(Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
 ```
 expected response looks like:
 
@@ -210,31 +197,6 @@ expected response looks like:
 | 00:50:56:a5:09:e0 | gi4 | 1 | 192.168.1.221 |
 
 
-**Windows** (PowerShell) with auth:
-
-```powershell
-$uri='http://127.0.0.1:8081/sg200/mac-table';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};(Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
-
-```
-
-**macOS/Linux** (bash/zsh) with auth:
-
-```bash
-curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -H "X-Collector-Token: your-token-here"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
-```
-
-without auth:
-
-```bash
-curl -fsS -X POST "http://127.0.0.1:8081/sg200/mac-table"   -H "Content-Type: application/json"   -d '{"ip":"192.168.0.221","user":"cisco","pass":"cisco"}'
-```
-
-Validation checks:
-
-* Both endpoints return HTTP 200.
-* `/sg200/mac-table` returns entries where `port_index` is an interface label (GE1, GE2, …).
-* `/sg200/system-summary` returns the switch identity fields.
-
 If either endpoint fails:
 
 * Review the collector console output.
@@ -243,17 +205,17 @@ If either endpoint fails:
 
 ---
 
-## Step 3 — Deploy with Windows Installer
+## Step 3 — Production Deployment with Windows Installer (skip in test environments)
 
 Download the SG200CollectorSetup.exe and run it as Administrator to install the collector, python, and Chromium components.
 To enable allowlist ot token auth, copy **C:\Program Files\SG200Collector\config\collector_security.json** to **C:\Program Files\SG200Collector\app**, edit it then restart collector services with **sc.exe stop SG200Collector** / **sc.exe start SG200Collector**
-Refer to 
+Refer to **Step 2** for testing.
 
 ---
 
 ## Step 4 — Install and configure the Forescout Connect app
 
-Only proceed after Step 2 succeeds.
+Only proceed after **Step 2** succeeds.
 
 ### 4.1 Allow unsigned Connect apps (Enterprise Manager)
 
@@ -284,40 +246,10 @@ High-level:
 
 ---
 
-## Monitoring and Testing
+## Monitoring in Production
 
 Tail logs:
 ```powershell
 Get-Content "C:\Program Files\SG200Collector\logs\SG200Collector.err.log" -Tail 50 -Wait
 ```
-Test switch polling manually, provide switch IP and creds as prompted
 
-```
-$uri='http://127.0.0.1:8081/sg200/system-summary'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
-```
-expected response looks like:
-
-| field | value |
-|---|---|
-| firmware_version | 1.1.2.0 |
-| host_name | GARAGE-SG200 |
-| model_description | 26-port Gigabit Smart Switch |
-| serial_number | DNI161702F3 |
-| switch_ip | 192.168.1.221 |
-
-```
- $uri='http://127.0.0.1:8081/sg200/mac-table'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
-```
-expected response looks like:
-
-
-| mac | port_index | vlan | switch_ip |
-|---|---|---|---|
-| 00:0c:29:8d:2f:64 | gi25 | 1 | 192.168.1.221 |
-| 00:0c:29:b2:94:c0 | gi25 | 1 | 192.168.1.221 |
-| 00:0c:29:bf:9c:73 | gi25 | 1 | 192.168.1.221 |
-| 00:0c:29:e3:95:a7 | gi4 | 1 | 192.168.1.221 |
-| 00:50:56:6c:d9:ff | gi4 | 1 | 192.168.1.221 |
-| 00:50:56:a5:09:e0 | gi4 | 1 | 192.168.1.221 |
-
----
