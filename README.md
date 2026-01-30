@@ -36,7 +36,7 @@ Primary outcomes in eyeSight:
 ## Components
 
 - Collector App: `collector.py` (Flask app) and SG200 scraper: `scrapers/sg200_client.py` (Playwright-based), downloadable as a **collector.zip** file
-- Collectore App: Windows installer for production deployment (runs as a service)
+- Collector App: Windows installer for production deployment (runs as a service)
 - Cisco SG200 Connect app for Forescout eyeSight, downloadable as a **CiscoSG200ConnectApp.zip** file
   
 
