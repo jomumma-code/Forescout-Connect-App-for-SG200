@@ -153,12 +153,12 @@ Provide switch IP and creds as prompted
 **Windows** (PowerShell) without auth:
 
 ```
-$uri='http://127.0.0.1:8081/sg200/system-summary'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
+$uri='http://127.0.0.1:8081/sg200/poll'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
 
 **Windows** (PowerShell) with auth:
 ```powershell
-$uri='http://127.0.0.1:8081/sg200/system-summary';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};$r=Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body; $r.PSObject.Properties | ForEach-Object {[pscustomobject]@{field=$_.Name;value=$_.Value}} | Format-Table -AutoSize field,value
+$uri='http://127.0.0.1:8081/sg200/poll';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};$r=Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body; $r.PSObject.Properties | ForEach-Object {[pscustomobject]@{field=$_.Name;value=$_.Value}} | Format-Table -AutoSize field,value
 ````
 expected response looks like:
 
@@ -176,13 +176,13 @@ expected response looks like:
 **Windows** (PowerShell) without auth:
 
 ```
- $uri='http://127.0.0.1:8081/sg200/mac-table'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
+ $uri='http://127.0.0.1:8081/sg200/poll'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; (Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
 ```
 
 **Windows** (PowerShell) with auth:
 
 ```powershell
-$uri='http://127.0.0.1:8081/sg200/mac-table';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};(Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
+$uri='http://127.0.0.1:8081/sg200/poll';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};(Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body).entries | Select-Object mac,port_index,vlan,switch_ip | Format-Table -AutoSize
 ```
 expected response looks like:
 
