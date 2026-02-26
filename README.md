@@ -156,18 +156,7 @@ Provide switch IP and creds as prompted
 $uri='http://127.0.0.1:8081/sg200/poll'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
 ```
-$uri='http://127.0.0.1:8081/sg200/poll'; 
-$payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; 
- 
-Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload |
-    Select-Object @{
-        Name='switch_ip';Expression={$_.switch_ip}
-    }, @{
-        Name='system_summary';Expression={$_.system_summary}
-    }, @{
-        Name='mac_table_entries';Expression={$_.mac_table.entries}
-    } |
-    Format-List -Force
+$uri='http://127.0.0.1:8081/sg200/poll';$payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress;Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload|Select-Object @{Name='switch_ip';Expression={$_.switch_ip}},@{Name='system_summary';Expression={$_.system_summary}},@{Name='mac_table_entries';Expression={$_.mac_table.entries}}|Format-List -Force
 ```
 
 **Windows** (PowerShell) with auth:
