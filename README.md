@@ -121,7 +121,7 @@ Windows (PowerShell):
 ```powershell
 cd C:\SG200Collector\current
 .\venv\Scripts\activate
-waitress-serve --host=127.0.0.1 --port=8081 collector:app
+waitress-serve --host=0.0.0.0 --port=8081 collector:app
 ```
 
 Verify the collector is reachable (run in a second terminal on the same host):
