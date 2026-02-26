@@ -155,11 +155,28 @@ Provide switch IP and creds as prompted
 ```
 $uri='http://127.0.0.1:8081/sg200/poll'; $payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload
 ```
+```
+$uri='http://127.0.0.1:8081/sg200/poll'; 
+$payload=@{ip=(Read-Host 'IP');user=(Read-Host 'User');pass=(&{$s=Read-Host 'Pass' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($p)}finally{[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($p)}})}|ConvertTo-Json -Compress; 
+ 
+Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Body $payload |
+    Select-Object @{
+        Name='switch_ip';Expression={$_.switch_ip}
+    }, @{
+        Name='system_summary';Expression={$_.system_summary}
+    }, @{
+        Name='mac_table_entries';Expression={$_.mac_table.entries}
+    } |
+    Format-List -Force
+```
 
 **Windows** (PowerShell) with auth:
 ```powershell
 $uri='http://127.0.0.1:8081/sg200/poll';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$pPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS);$pass=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($pPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pPtr);$tPtr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS);$token=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($tPtr);[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tPtr);$body=@{ip=$ip;user=$user;pass=$pass}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$token};$r=Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body; $r.PSObject.Properties | ForEach-Object {[pscustomobject]@{field=$_.Name;value=$_.Value}} | Format-Table -AutoSize field,value
-````
+```
+```
+$uri='http://127.0.0.1:8081/sg200/poll';$ip=Read-Host 'IP';$user=Read-Host 'User';$passS=Read-Host 'Pass' -AsSecureString;$tokS=Read-Host 'Token' -AsSecureString;$p=[Runtime.InteropServices.Marshal]::PtrToStringBSTR([Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS));[Runtime.InteropServices.Marshal]::ZeroFreeBSTR([Runtime.InteropServices.Marshal]::SecureStringToBSTR($passS));$t=[Runtime.InteropServices.Marshal]::PtrToStringBSTR([Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS));[Runtime.InteropServices.Marshal]::ZeroFreeBSTR([Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokS));$body=@{ip=$ip;user=$user;pass=$p}|ConvertTo-Json -Compress;$headers=@{'X-Collector-Token'=$t};$r=Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json' -Headers $headers -Body $body;[PSCustomObject]@{switch_ip=$r.switch_ip;system_summary=$r.system_summary;mac_table_entries=$r.mac_table.entries}|Format-List -Force
+```
 expected response looks like:
 
 | field | value |
