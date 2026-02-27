@@ -15,35 +15,37 @@
 
   <rect x="40" y="60" width="250" height="170" class="box"/>
   <text x="70" y="95" class="title">Forescout Connect App</text>
-  <text x="70" y="125" class="text">- sg200_poll.py</text>
-  <text x="70" y="145" class="text">- sg200_test.py</text>
+  <text x="70" y="125" class="text">- sg2xx_poll.py</text>
+  <text x="70" y="145" class="text">- sg2xx_test.py</text>
   <text x="70" y="170" class="text">- system.conf / property.conf</text>
   <text x="70" y="195" class="muted">Runs on eyeSight appliance</text>
 
   <rect x="430" y="60" width="250" height="170" class="box"/>
-  <text x="440" y="95" class="title">Collector Service</text>
-  <text x="440" y="125" class="text">Flask API</text>
-  <text x="440" y="145" class="text">/sg200/mac-table</text>
-  <text x="440" y="165" class="text">/sg200/system-summary</text>
-  <text x="440" y="190" class="muted">Playwright + scrapers</text>
+  <text x="440" y="95" class="title">Collector (on proxy host)</text>
+  <text x="440" y="125" class="text">WSGI server with Flask app</text>
+  <text x="440" y="145" class="text">GET /health</text>
+  <text x="440" y="165" class="text">POST /sg200/poll</text>
+  <text x="440" y="185" class="text">Auto-selects scraper module</text>
+  <text x="440" y="205" class="muted">Playwright + modular scrapers</text>
 
   <rect x="780" y="60" width="250" height="170" class="box"/>
-  <text x="790" y="95" class="title">Cisco SG200 Switch</text>
-  <text x="790" y="125" class="text">HTTP web UI</text>
-  <text x="790" y="145" class="text">Dynamic MAC table</text>
-  <text x="790" y="165" class="text">System Summary</text>
-  <text x="790" y="190" class="muted">Port Settings (names/descriptions)</text>
+  <text x="790" y="95" class="title">Cisco Switch</text>
+  <text x="790" y="125" class="text">HTTP management UI</text>
+  <text x="790" y="145" class="text">Dynamic MAC table view</text>
+  <text x="790" y="165" class="text">System status summary view</text>
+  <text x="790" y="190" class="muted">Port name and port metadata sources</text>
 
   <line x1="310" y1="135" x2="400" y2="135" class="arrow"/>
-  <text x="310" y="115" class="port">HTTP (8081)</text>
+  <text x="310" y="115" class="port">HTTP 8081</text>
 
   <line x1="690" y1="135" x2="770" y2="135" class="arrow"/>
-  <text x="690" y="115" class="port">HTTP (80)</text>
+  <text x="690" y="115" class="port">HTTP 80</text>
 
-  <rect x="120" y="280" width="740" height="170" class="box"/>
+  <rect x="120" y="280" width="740" height="190" class="box"/>
   <text x="150" y="315" class="title">Data Flow</text>
-  <text x="150" y="345" class="text">1) Connect app sends switch credentials (ip/user/pass) to Collector</text>
-  <text x="150" y="370" class="text">2) Collector logs into SG200 web UI and scrapes pages</text>
-  <text x="150" y="395" class="text">3) Collector returns MAC/VLAN/port + system summary metadata</text>
-  <text x="150" y="420" class="text">4) Connect app reports endpoints + properties to Forescout</text>
+  <text x="150" y="345" class="text">1) Connect App sends ip, user, pass to Collector via POST /sg200/poll</text>
+  <text x="150" y="370" class="text">2) Collector selects scraper module, logs in, and gathers system summary and MAC table</text>
+  <text x="150" y="395" class="text">3) Collector adds port_type per port and returns unified JSON response</text>
+  <text x="150" y="420" class="text">4) Connect App maps fields to properties and reports endpoints to eyeSight</text>
+  <text x="150" y="445" class="muted">Optional request controls include IP allowlist and X-Collector-Token</text>
 </svg>
