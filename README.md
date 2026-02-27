@@ -26,6 +26,8 @@ Collector HTTP endpoints:
 - **GET /health**
 - **POST /sg200/poll**
 
+  ![Architecture diagram](docs/architecture.svg)
+
 ## System requirements
 
 Windows:
